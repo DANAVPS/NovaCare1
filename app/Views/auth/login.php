@@ -79,7 +79,7 @@
                     </div>
                 <?php endif; ?>
                 
-                <form method="POST" action="/xampp/NovaCareCRM/public/index.php?action=login" class="space-y-6">
+                <form method="POST" action="/NovaCareCRM/public/index.php?action=login" class="space-y-6">
                     <div>
                         <label class="block text-gray-700 font-semibold mb-2">Correo Electrónico</label>
                         <input type="email" name="email" required 
@@ -101,7 +101,7 @@
                             <input type="checkbox" name="remember" class="rounded border-gray-300 text-primary focus:ring-primary">
                             Recordarme
                         </label>
-                        <a href="/xampp/NovaCareCRM/public/index.php?action=forgot-password" class="text-sm font-medium text-primary hover:underline transition">¿Olvidaste tu contraseña?</a>
+                        <a href="/NovaCareCRM/public/index.php?action=forgot-password" class="text-sm font-medium text-primary hover:underline transition">¿Olvidaste tu contraseña?</a>
                     </div>
                     
                     <button type="submit" class="btn-primary w-full text-white font-bold py-3 rounded-xl shadow-md hover:shadow-lg transition-all transform hover:scale-[1.02]">

@@ -15,5 +15,5 @@ define('MAIL_NOTIFY_ADMIN', true);
 define('MAIL_ADMIN_EMAIL', 'soporte@deltadevsystems.com');
 
 // URLs del sistema
-define('APP_URL', 'http://localhost/xampp/NovaCareCRM');
+define('APP_URL', 'http://localhost/NovaCareCRM');
 ?>

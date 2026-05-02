@@ -112,7 +112,7 @@
                             <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mi Perfil</a>
                             <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Configuración</a>
                             <hr class="my-1">
-                            <a href="/xampp/NovaCareCRM/public/index.php?action=logout" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Cerrar Sesión</a>
+                            <a href="/NovaCareCRM/public/index.php?action=logout" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Cerrar Sesión</a>
                         </div>
                     </div>
                 </div>
@@ -127,7 +127,7 @@
             <nav class="mt-5 px-2">
                 <div class="space-y-1">
                     <!-- Dashboard -->
-                    <a href="/xampp/NovaCareCRM/public/index.php?action=dashboard" 
+                    <a href="/NovaCareCRM/public/index.php?action=dashboard" 
                        class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg <?php echo (!isset($_GET['modulo']) && $_GET['action'] == 'dashboard') ? 'active bg-primary text-white' : 'hover:bg-gray-100'; ?>">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
@@ -136,7 +136,7 @@
                     </a>
                     
                     <!-- Clientes -->
-                    <a href="/xampp/NovaCareCRM/public/index.php?action=clientes" 
+                    <a href="/NovaCareCRM/public/index.php?action=clientes" 
                        class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
@@ -146,7 +146,7 @@
                     </a>
                     
                     <!-- Productos -->
-                    <a href="/xampp/NovaCareCRM/public/index.php?action=productos" 
+                    <a href="/NovaCareCRM/public/index.php?action=productos" 
                        class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
@@ -155,7 +155,7 @@
                     </a>
                     
                     <!-- Órdenes Médicas -->
-                    <a href="/xampp/NovaCareCRM/public/index.php?action=ordenes" 
+                    <a href="/NovaCareCRM/public/index.php?action=ordenes" 
                        class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -164,7 +164,7 @@
                     </a>
                     
                     <!-- Autorizaciones -->
-                    <a href="/xampp/NovaCareCRM/public/index.php?action=autorizaciones" 
+                    <a href="/NovaCareCRM/public/index.php?action=autorizaciones" 
                        class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
@@ -276,7 +276,7 @@
 
             <!-- Accesos rápidos -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-                <a href="/xampp/NovaCareCRM/public/index.php?action=clientes&tipo=paciente" 
+                <a href="/NovaCareCRM/public/index.php?action=clientes&tipo=paciente" 
                    class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow-md p-6 text-white hover:shadow-lg transition-all transform hover:scale-105">
                     <div class="flex items-center justify-between">
                         <div>
@@ -289,7 +289,7 @@
                     </div>
                 </a>
                 
-                <a href="/xampp/NovaCareCRM/public/index.php?action=ordenes&action=create" 
+                <a href="/NovaCareCRM/public/index.php?action=ordenes&action=create" 
                    class="bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow-md p-6 text-white hover:shadow-lg transition-all transform hover:scale-105">
                     <div class="flex items-center justify-between">
                         <div>
@@ -302,7 +302,7 @@
                     </div>
                 </a>
                 
-                <a href="/xampp/NovaCareCRM/public/index.php?action=productos&action=create" 
+                <a href="/NovaCareCRM/public/index.php?action=productos&action=create" 
                    class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg shadow-md p-6 text-white hover:shadow-lg transition-all transform hover:scale-105">
                     <div class="flex items-center justify-between">
                         <div>
@@ -315,7 +315,7 @@
                     </div>
                 </a>
                 
-                <a href="/xampp/NovaCareCRM/public/index.php?action=autorizaciones" 
+                <a href="/NovaCareCRM/public/index.php?action=autorizaciones" 
                    class="bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg shadow-md p-6 text-white hover:shadow-lg transition-all transform hover:scale-105">
                     <div class="flex items-center justify-between">
                         <div>

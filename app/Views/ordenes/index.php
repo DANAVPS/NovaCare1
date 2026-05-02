@@ -15,11 +15,6 @@
         .btn-primary:hover { background-color: #d91617; transform: scale(1.02); }
         .sidebar-link:hover { background-color: #f51b1c; color: white; transform: translateX(5px); }
         .sidebar-link.active { background-color: #f51b1c; color: white; }
-        .status-pendiente { background-color: #fef3c7; color: #d97706; }
-        .status-completada { background-color: #d1fae5; color: #059669; }
-        .status-anulada { background-color: #fee2e2; color: #dc2626; }
-        .status-parcial { background-color: #dbeafe; color: #2563eb; }
-        .status-expirada { background-color: #f3f4f6; color: #6b7280; }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -37,14 +32,12 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
-                    <div class="relative group">
-                        <button class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition">
-                            <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold">
-                                <?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?>
-                            </div>
-                            <span class="text-sm font-medium text-gray-700"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
-                        </button>
-                    </div>
+                    <button class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition">
+                        <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold">
+                            <?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?>
+                        </div>
+                        <span class="text-sm font-medium text-gray-700"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -53,15 +46,16 @@
     <div class="flex">
         <aside class="w-64 bg-white shadow-lg min-h-screen" style="height: calc(100vh - 64px);">
             <nav class="mt-5 px-2">
-                <a href="/xampp/NovaCareCRM/public/index.php?action=dashboard" class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-primary hover:text-white transition">Dashboard</a>
-                <a href="/xampp/NovaCareCRM/public/index.php?action=clientes" class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-primary hover:text-white transition">Clientes</a>
-                <a href="/xampp/NovaCareCRM/public/index.php?action=productos" class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-primary hover:text-white transition">Productos</a>
-                <a href="/xampp/NovaCareCRM/public/index.php?action=ordenes" class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg bg-primary text-white">Órdenes</a>
-                <a href="/xampp/NovaCareCRM/public/index.php?action=autorizaciones" class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-primary hover:text-white transition">Autorizaciones</a>
+                <a href="/NovaCareCRM/public/index.php?action=dashboard"      class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg transition">Dashboard</a>
+                <a href="/NovaCareCRM/public/index.php?action=clientes"       class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg transition">Clientes</a>
+                <a href="/NovaCareCRM/public/index.php?action=productos"      class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg transition">Productos</a>
+                <a href="/NovaCareCRM/public/index.php?action=ordenes"        class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg bg-primary text-white">Órdenes</a>
+                <a href="/NovaCareCRM/public/index.php?action=autorizaciones" class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg transition">Autorizaciones</a>
             </nav>
         </aside>
 
         <main class="flex-1 p-6">
+
             <?php if (isset($_SESSION['flash_success'])): ?>
                 <div class="mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md">
                     <?php echo htmlspecialchars($_SESSION['flash_success']); unset($_SESSION['flash_success']); ?>
@@ -78,7 +72,8 @@
                     <h1 class="text-2xl font-bold text-gray-800">Órdenes Médicas</h1>
                     <p class="text-gray-600">Gestión de órdenes, prescripciones y tratamientos</p>
                 </div>
-                <a href="/xampp/NovaCareCRM/public/index.php?action=ordenes&subaction=create" class="btn-primary px-4 py-2 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition">
+                <a href="/NovaCareCRM/public/index.php?action=ordenes&subaction=create"
+                   class="btn-primary px-4 py-2 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition">
                     + Nueva Orden
                 </a>
             </div>
@@ -109,15 +104,27 @@
 
             <!-- Filtros -->
             <div class="bg-white rounded-lg shadow mb-6 p-4">
-                <div class="flex gap-2">
-                    <a href="?action=ordenes" class="px-3 py-1 rounded <?php echo !$estadoFiltro ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'; ?>">Todas</a>
-                    <a href="?action=ordenes&estado=pendiente" class="px-3 py-1 rounded <?php echo $estadoFiltro == 'pendiente' ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'; ?>">Pendientes</a>
-                    <a href="?action=ordenes&estado=completada" class="px-3 py-1 rounded <?php echo $estadoFiltro == 'completada' ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'; ?>">Completadas</a>
-                    <a href="?action=ordenes&estado=anulada" class="px-3 py-1 rounded <?php echo $estadoFiltro == 'anulada' ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'; ?>">Anuladas</a>
+                <div class="flex gap-2 flex-wrap">
+                    <a href="?action=ordenes"
+                       class="px-3 py-1 rounded text-sm <?php echo !$estadoFiltro ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'; ?>">
+                        Todas
+                    </a>
+                    <a href="?action=ordenes&estado=pendiente"
+                       class="px-3 py-1 rounded text-sm <?php echo $estadoFiltro == 'pendiente'  ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'; ?>">
+                        Pendientes
+                    </a>
+                    <a href="?action=ordenes&estado=completada"
+                       class="px-3 py-1 rounded text-sm <?php echo $estadoFiltro == 'completada' ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'; ?>">
+                        Completadas
+                    </a>
+                    <a href="?action=ordenes&estado=anulada"
+                       class="px-3 py-1 rounded text-sm <?php echo $estadoFiltro == 'anulada'    ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'; ?>">
+                        Anuladas
+                    </a>
                 </div>
             </div>
 
-            <!-- Tabla -->
+            <!-- Tabla — 8 columnas (sin "Estado Orden") -->
             <div class="bg-white rounded-lg shadow overflow-hidden">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
@@ -127,46 +134,105 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Médico</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Prioridad</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado Autorización</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Valor</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
                         <?php if (empty($ordenes)): ?>
-                            <tr><td colspan="8" class="px-6 py-4 text-center text-gray-500">No hay órdenes médicas registradas</td></tr>
+                            <tr>
+                                <td colspan="8" class="px-6 py-4 text-center text-gray-500">
+                                    No hay órdenes médicas registradas
+                                </td>
+                            </tr>
                         <?php else: ?>
                             <?php foreach ($ordenes as $orden): ?>
                                 <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 text-sm font-medium text-gray-900"><?php echo htmlspecialchars($orden['numero_orden']); ?></td>
-                                    <td class="px-6 py-4 text-sm text-gray-900"><?php echo htmlspecialchars($orden['paciente_nombre']); ?><br><span class="text-xs text-gray-500"><?php echo htmlspecialchars($orden['paciente_identificacion']); ?></span></td>
-                                    <td class="px-6 py-4 text-sm text-gray-900"><?php echo htmlspecialchars($orden['medico_nombre'] ?? 'No asignado'); ?></td>
-                                    <td class="px-6 py-4 text-sm text-gray-500"><?php echo date('d/m/Y', strtotime($orden['fecha_orden'])); ?></td>
+
+                                    <!-- N° Orden -->
+                                    <td class="px-6 py-4 text-sm font-medium text-gray-900">
+                                        <?php echo htmlspecialchars($orden['numero_orden']); ?>
+                                    </td>
+
+                                    <!-- Paciente -->
+                                    <td class="px-6 py-4 text-sm text-gray-900">
+                                        <?php echo htmlspecialchars($orden['paciente_nombre']); ?>
+                                        <br>
+                                        <span class="text-xs text-gray-500">
+                                            <?php echo htmlspecialchars($orden['paciente_identificacion']); ?>
+                                        </span>
+                                    </td>
+
+                                    <!-- Médico -->
+                                    <td class="px-6 py-4 text-sm text-gray-900">
+                                        <?php echo htmlspecialchars($orden['medico_nombre'] ?? 'No asignado'); ?>
+                                    </td>
+
+                                    <!-- Fecha -->
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        <?php echo date('d/m/Y', strtotime($orden['fecha_orden'])); ?>
+                                    </td>
+
+                                    <!-- Prioridad -->
                                     <td class="px-6 py-4">
-                                        <span class="px-2 py-1 text-xs rounded-full 
-                                            <?php echo $orden['prioridad'] == 'alta' ? 'bg-red-100 text-red-800' : ''; ?>
-                                            <?php echo $orden['prioridad'] == 'media' ? 'bg-yellow-100 text-yellow-800' : ''; ?>
-                                            <?php echo $orden['prioridad'] == 'baja' ? 'bg-green-100 text-green-800' : ''; ?>
-                                            <?php echo $orden['prioridad'] == 'urgente' ? 'bg-purple-100 text-purple-800' : ''; ?>">
+                                        <span class="px-2 py-1 text-xs rounded-full
+                                            <?php echo $orden['prioridad'] == 'urgente' ? 'bg-purple-100 text-purple-800' : ''; ?>
+                                            <?php echo $orden['prioridad'] == 'alta'    ? 'bg-red-100 text-red-800'       : ''; ?>
+                                            <?php echo $orden['prioridad'] == 'media'   ? 'bg-yellow-100 text-yellow-800' : ''; ?>
+                                            <?php echo $orden['prioridad'] == 'baja'    ? 'bg-green-100 text-green-800'   : ''; ?>">
                                             <?php echo ucfirst($orden['prioridad']); ?>
                                         </span>
                                     </td>
+
+                                    <!-- Estado Autorización -->
                                     <td class="px-6 py-4">
-                                        <span class="px-2 py-1 text-xs rounded-full status-<?php echo $orden['estado']; ?>">
-                                            <?php echo ucfirst($orden['estado']); ?>
-                                        </span>
+                                        <?php
+                                            $ea = $orden['estado_autorizacion'] ?? null;
+                                            if ($ea === 'aprobada')
+                                                echo '<span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Aprobada</span>';
+                                            elseif ($ea === 'rechazada')
+                                                echo '<span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Rechazada</span>';
+                                            elseif ($ea === 'pendiente')
+                                                echo '<span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Pendiente</span>';
+                                            elseif ($ea === 'parcial')
+                                                echo '<span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">Parcial</span>';
+                                            else
+                                                echo '<span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-600">No requiere</span>';
+                                        ?>
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-gray-900">$<?php echo number_format($orden['total_valor'], 0, ',', '.'); ?></td>
-                                    <td class="px-6 py-4 text-sm font-medium space-x-2">
-                                        <a href="?action=ordenes&subaction=show&id=<?php echo $orden['id']; ?>" class="text-blue-600 hover:text-blue-900">Ver</a>
-                                        <a href="?action=ordenes&subaction=anular&id=<?php echo $orden['id']; ?>" class="text-red-600 hover:text-red-900" onclick="return confirm('¿Anular esta orden médica?')">Anular</a>
+
+                                    <!-- Valor -->
+                                    <td class="px-6 py-4 text-sm text-gray-900 font-medium">
+                                        $<?php echo number_format($orden['total_valor'], 0, ',', '.'); ?>
                                     </td>
+
+                                    <!-- Acciones -->
+                                    <td class="px-6 py-4 text-sm font-medium">
+                                        <div class="flex items-center gap-3">
+                                            <a href="?action=ordenes&subaction=show&id=<?php echo $orden['id']; ?>"
+                                               class="text-blue-600 hover:text-blue-900 hover:underline">
+                                                Ver
+                                            </a>
+                                            <?php if ($orden['estado'] !== 'anulada'): ?>
+                                                <a href="?action=ordenes&subaction=anular&id=<?php echo $orden['id']; ?>"
+                                                   class="text-red-600 hover:text-red-900 hover:underline"
+                                                   onclick="return confirm('¿Anular esta orden médica?')">
+                                                    Anular
+                                                </a>
+                                            <?php else: ?>
+                                                <span class="text-gray-400 text-xs">Anulada</span>
+                                            <?php endif; ?>
+                                        </div>
+                                    </td>
+
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </tbody>
                 </table>
             </div>
+
         </main>
     </div>
 </body>

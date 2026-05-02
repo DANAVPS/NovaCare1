@@ -35,22 +35,22 @@
     <div class="flex">
         <aside class="w-64 bg-white shadow-lg min-h-screen" style="height: calc(100vh - 64px);">
             <nav class="mt-5 px-2">
-                <a href="/xampp/NovaCareCRM/public/index.php?action=dashboard" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-primary hover:text-white transition">Dashboard</a>
-                <a href="/xampp/NovaCareCRM/public/index.php?action=clientes" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-primary hover:text-white transition">Clientes</a>
-                <a href="/xampp/NovaCareCRM/public/index.php?action=productos" class="flex items-center px-4 py-3 text-gray-700 rounded-lg bg-primary text-white">Productos</a>
-                <a href="/xampp/NovaCareCRM/public/index.php?action=ordenes" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-primary hover:text-white transition">Órdenes</a>
-                <a href="/xampp/NovaCareCRM/public/index.php?action=autorizaciones" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-primary hover:text-white transition">Autorizaciones</a>
+                <a href="/NovaCareCRM/public/index.php?action=dashboard" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-primary hover:text-white transition">Dashboard</a>
+                <a href="/NovaCareCRM/public/index.php?action=clientes" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-primary hover:text-white transition">Clientes</a>
+                <a href="/NovaCareCRM/public/index.php?action=productos" class="flex items-center px-4 py-3 text-gray-700 rounded-lg bg-primary text-white">Productos</a>
+                <a href="/NovaCareCRM/public/index.php?action=ordenes" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-primary hover:text-white transition">Órdenes</a>
+                <a href="/NovaCareCRM/public/index.php?action=autorizaciones" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-primary hover:text-white transition">Autorizaciones</a>
             </nav>
         </aside>
 
         <main class="flex-1 p-6">
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-2xl font-bold text-gray-800">Editar Producto</h1>
-                <a href="/xampp/NovaCareCRM/public/index.php?action=productos" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition">← Volver</a>
+                <a href="/NovaCareCRM/public/index.php?action=productos" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition">← Volver</a>
             </div>
 
             <div class="bg-white rounded-lg shadow p-6">
-                <form method="POST" action="/xampp/NovaCareCRM/public/index.php?action=productos&subaction=update">
+                <form method="POST" action="/NovaCareCRM/public/index.php?action=productos&subaction=update">
                     <input type="hidden" name="id" value="<?php echo $producto['id']; ?>">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>

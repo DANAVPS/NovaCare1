@@ -9,7 +9,7 @@ define('DB_PASS', '');
 
 // Configuración de la aplicación
 define('APP_NAME', 'NovaCare CRM');
-define('APP_URL', 'http://localhost/xampp/NovaCareCRM'); // Cambia NovaCareCRM por tu carpeta
+define('APP_URL', 'http://localhost/NovaCareCRM'); // Cambia NovaCareCRM por tu carpeta
 define('APP_ENV', 'development');
 
 // Configuración de sesión

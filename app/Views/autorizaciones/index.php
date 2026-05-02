@@ -50,11 +50,11 @@
     <div class="flex">
         <aside class="w-64 bg-white shadow-lg min-h-screen" style="height: calc(100vh - 64px);">
             <nav class="mt-5 px-2">
-                <a href="/xampp/NovaCareCRM/public/index.php?action=dashboard" class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-primary hover:text-white transition">Dashboard</a>
-                <a href="/xampp/NovaCareCRM/public/index.php?action=clientes" class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-primary hover:text-white transition">Clientes</a>
-                <a href="/xampp/NovaCareCRM/public/index.php?action=productos" class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-primary hover:text-white transition">Productos</a>
-                <a href="/xampp/NovaCareCRM/public/index.php?action=ordenes" class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-primary hover:text-white transition">Órdenes</a>
-                <a href="/xampp/NovaCareCRM/public/index.php?action=autorizaciones" class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg bg-primary text-white">Autorizaciones</a>
+                <a href="/NovaCareCRM/public/index.php?action=dashboard" class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-primary hover:text-white transition">Dashboard</a>
+                <a href="/NovaCareCRM/public/index.php?action=clientes" class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-primary hover:text-white transition">Clientes</a>
+                <a href="/NovaCareCRM/public/index.php?action=productos" class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-primary hover:text-white transition">Productos</a>
+                <a href="/NovaCareCRM/public/index.php?action=ordenes" class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-primary hover:text-white transition">Órdenes</a>
+                <a href="/NovaCareCRM/public/index.php?action=autorizaciones" class="sidebar-link flex items-center px-4 py-3 text-gray-700 rounded-lg bg-primary text-white">Autorizaciones</a>
             </nav>
         </aside>
 
@@ -158,7 +158,7 @@
             <div class="bg-primary p-4 rounded-t-lg">
                 <h3 class="text-white text-lg font-bold">Procesar Autorización</h3>
             </div>
-            <form id="modalForm" method="POST" action="/xampp/NovaCareCRM/public/index.php?action=autorizaciones&subaction=aprobar" class="p-6">
+            <form id="modalForm" method="POST" action="/NovaCareCRM/public/index.php?action=autorizaciones&subaction=aprobar" class="p-6">
                 <input type="hidden" name="id" id="autorizacionId">
                 <div class="mb-4">
                     <label class="block text-gray-700 font-semibold mb-2">Decisión</label>

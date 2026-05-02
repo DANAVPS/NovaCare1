@@ -34,7 +34,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('/xampp/NovaCareCRM/Imagenes/salud.jpg');
+            background-image: url('/NovaCareCRM/Imagenes/salud.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -106,7 +106,7 @@
                     Ingresa tu nueva contraseña. Debe tener al menos 6 caracteres.
                 </p>
                 
-                <form method="POST" action="/xampp/NovaCareCRM/public/index.php?action=reset-password" class="space-y-6" id="resetForm">
+                <form method="POST" action="/NovaCareCRM/public/index.php?action=reset-password" class="space-y-6" id="resetForm">
                     <input type="hidden" name="token" value="<?php echo htmlspecialchars($token); ?>">
                     
                     <div>
@@ -137,7 +137,7 @@
                 </form>
                 
                 <div class="mt-6 text-center">
-                    <a href="/xampp/NovaCareCRM/public/index.php?action=login" class="text-primary font-semibold hover:underline transition">
+                    <a href="/NovaCareCRM/public/index.php?action=login" class="text-primary font-semibold hover:underline transition">
                         ← Volver al inicio de sesión
                     </a>
                 </div>

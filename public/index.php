@@ -1,14 +1,11 @@
 <?php
 // public/index.php - Versión completa con todos los módulos
 
-// Habilitar errores
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Cargar configuración
 require_once __DIR__ . '/../config/config.php';
 
-// Cargar controladores
 require_once __DIR__ . '/../app/Controllers/AuthController.php';
 require_once __DIR__ . '/../app/Controllers/DashboardController.php';
 require_once __DIR__ . '/../app/Controllers/ClienteController.php';
@@ -16,60 +13,50 @@ require_once __DIR__ . '/../app/Controllers/ProductoController.php';
 require_once __DIR__ . '/../app/Controllers/OrdenMedicaController.php';
 require_once __DIR__ . '/../app/Controllers/AutorizacionController.php';
 
-// Obtener el parámetro 'action' de la URL
-$action = isset($_GET['action']) ? $_GET['action'] : 'login';
-$subaction = isset($_GET['subaction']) ? $_GET['subaction'] : null;
-$ajax = isset($_GET['ajax']) ? $_GET['ajax'] : null;
+$action    = $_GET['action']    ?? 'login';
+$subaction = $_GET['subaction'] ?? null;
+$ajax      = $_GET['ajax']      ?? null;
 
-// Debug: ver qué acción estamos procesando
-// echo "<!-- Debug: Action = " . $action . " -->\n";
-
-// Enrutamiento principal
 switch ($action) {
+
     // =============================================
     // AUTENTICACIÓN
     // =============================================
     case 'login':
+        $controller = new AuthController();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $controller = new AuthController();
             $controller->login();
         } else {
-            $controller = new AuthController();
             $controller->showLogin();
         }
         break;
-    
+
     case 'logout':
-        $controller = new AuthController();
-        $controller->logout();
+        (new AuthController())->logout();
         break;
-    
+
     case 'dashboard':
-        $controller = new DashboardController();
-        $controller->index();
+        (new DashboardController())->index();
         break;
-    
+
     case 'forgot-password':
-        $controller = new AuthController();
-        $controller->showForgotPassword();
+        (new AuthController())->showForgotPassword();
         break;
 
     case 'forgot-password-submit':
+        $controller = new AuthController();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $controller = new AuthController();
             $controller->forgotPassword();
         } else {
-            $controller = new AuthController();
             $controller->showForgotPassword();
         }
         break;
 
     case 'reset-password':
+        $controller = new AuthController();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $controller = new AuthController();
             $controller->resetPassword();
         } else {
-            $controller = new AuthController();
             $controller->showResetPassword();
         }
         break;
@@ -79,23 +66,14 @@ switch ($action) {
     // =============================================
     case 'clientes':
         $controller = new ClienteController();
-        if ($subaction === 'store' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-            $controller->store();
-        } elseif ($subaction === 'create') {
-            $controller->create();
-        } elseif ($subaction === 'edit') {
-            $controller->edit();
-        } elseif ($subaction === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-            $controller->update();
-        } elseif ($subaction === 'delete') {
-            $controller->delete();
-        } elseif ($subaction === 'show') {
-            $controller->show();
-        } elseif ($ajax === 'search') {
-            $controller->search();
-        } else {
-            $controller->index();
-        }
+        if      ($subaction === 'store'  && $_SERVER['REQUEST_METHOD'] === 'POST') $controller->store();
+        elseif  ($subaction === 'create')                                           $controller->create();
+        elseif  ($subaction === 'edit')                                             $controller->edit();
+        elseif  ($subaction === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') $controller->update();
+        elseif  ($subaction === 'delete')                                           $controller->delete();
+        elseif  ($subaction === 'show')                                             $controller->show();
+        elseif  ($ajax      === 'search')                                           $controller->search();
+        else                                                                        $controller->index();
         break;
 
     // =============================================
@@ -103,23 +81,14 @@ switch ($action) {
     // =============================================
     case 'productos':
         $controller = new ProductoController();
-        if ($subaction === 'store' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-            $controller->store();
-        } elseif ($subaction === 'create') {
-            $controller->create();
-        } elseif ($subaction === 'edit') {
-            $controller->edit();
-        } elseif ($subaction === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-            $controller->update();
-        } elseif ($subaction === 'delete') {
-            $controller->delete();
-        } elseif ($subaction === 'show') {
-            $controller->show();
-        } elseif ($ajax === 'search') {
-            $controller->search();
-        } else {
-            $controller->index();
-        }
+        if      ($subaction === 'store'  && $_SERVER['REQUEST_METHOD'] === 'POST') $controller->store();
+        elseif  ($subaction === 'create')                                           $controller->create();
+        elseif  ($subaction === 'edit')                                             $controller->edit();
+        elseif  ($subaction === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') $controller->update();
+        elseif  ($subaction === 'delete')                                           $controller->delete();
+        elseif  ($subaction === 'show')                                             $controller->show();
+        elseif  ($ajax      === 'search')                                           $controller->search();
+        else                                                                        $controller->index();
         break;
 
     // =============================================
@@ -127,23 +96,14 @@ switch ($action) {
     // =============================================
     case 'ordenes':
         $controller = new OrdenMedicaController();
-        if ($subaction === 'store' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-            $controller->store();
-        } elseif ($subaction === 'create') {
-            $controller->create();
-        } elseif ($subaction === 'edit') {
-            $controller->edit();
-        } elseif ($subaction === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-            $controller->update();
-        } elseif ($subaction === 'delete') {
-            $controller->delete();
-        } elseif ($subaction === 'show') {
-            $controller->show();
-        } elseif ($subaction === 'anular') {
-            $controller->anular();
-        } else {
-            $controller->index();
-        }
+        if      ($subaction === 'store'  && $_SERVER['REQUEST_METHOD'] === 'POST') $controller->store();
+        elseif  ($subaction === 'create')                                           $controller->create();
+        elseif  ($subaction === 'edit')                                             $controller->edit();
+        elseif  ($subaction === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') $controller->update();
+        elseif  ($subaction === 'delete')                                           $controller->delete();
+        elseif  ($subaction === 'show')                                             $controller->show();
+        elseif  ($subaction === 'anular')                                           $controller->anular();
+        else                                                                        $controller->index();
         break;
 
     // =============================================
@@ -151,23 +111,39 @@ switch ($action) {
     // =============================================
     case 'autorizaciones':
         $controller = new AutorizacionController();
-        if ($subaction === 'aprobar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-            $controller->aprobar();
+
+        // Autorización individual: el modal del index envía a subaction=aprobar o subaction=rechazar
+        // Ambas apuntan al mismo método procesar() que lee $_POST['estado']
+        if (($subaction === 'aprobar' || $subaction === 'rechazar') && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->procesar();
+
+        // Aprobar o rechazar una orden médica completa (todos sus productos de una vez)
+        } elseif ($subaction === 'aprobarOrden' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->aprobarOrden();
+
+        } elseif ($subaction === 'rechazarOrden' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->rechazarOrden();
+
+        // CRUD normal
         } elseif ($subaction === 'create') {
             $controller->create();
+
+        } elseif ($subaction === 'store' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->store();
+
         } elseif ($subaction === 'show') {
             $controller->show();
+
         } else {
             $controller->index();
         }
         break;
 
     // =============================================
-    // DEFAULT - Mostrar login
+    // DEFAULT
     // =============================================
     default:
-        $controller = new AuthController();
-        $controller->showLogin();
+        (new AuthController())->showLogin();
         break;
 }
 ?>

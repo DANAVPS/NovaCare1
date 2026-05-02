@@ -34,7 +34,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('/xampp/NovaCareCRM/Imagenes/salud.jpg');
+            background-image: url('/NovaCareCRM/Imagenes/salud.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -90,7 +90,7 @@
                     Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.
                 </p>
                 
-                <form method="POST" action="/xampp/NovaCareCRM/public/index.php?action=forgot-password-submit" class="space-y-6">
+                <form method="POST" action="/NovaCareCRM/public/index.php?action=forgot-password-submit" class="space-y-6">
                     <div>
                         <label class="block text-gray-700 font-semibold mb-2">Correo Electrónico</label>
                         <input type="email" name="email" required 
@@ -104,7 +104,7 @@
                 </form>
                 
                 <div class="mt-6 text-center">
-                    <a href="/xampp/NovaCareCRM/public/index.php?action=login" class="text-primary font-semibold hover:underline transition">
+                    <a href="/NovaCareCRM/public/index.php?action=login" class="text-primary font-semibold hover:underline transition">
                         ← Volver al inicio de sesión
                     </a>
                 </div>
