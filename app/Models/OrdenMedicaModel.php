@@ -14,14 +14,18 @@ class OrdenMedicaModel {
      * Generar número de orden único
      */
     private function generarNumeroOrden() {
-        $prefijo = 'ORD-' . date('Ymd');
-        $sql = "SELECT COUNT(*) as total FROM ordenes_medicas WHERE numero_orden LIKE :prefijo";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([':prefijo' => $prefijo . '%']);
-        $result = $stmt->fetch();
-        $numero = ($result['total'] ?? 0) + 1;
-        return $prefijo . '-' . str_pad($numero, 4, '0', STR_PAD_LEFT);
-    }
+    $prefijo = 'ORD-' . date('Ymd');
+    
+    // Buscar el número más alto existente hoy, no contar
+    $sql = "SELECT MAX(CAST(SUBSTRING_INDEX(numero_orden, '-', -1) AS UNSIGNED)) as max_num 
+            FROM ordenes_medicas 
+            WHERE numero_orden LIKE :prefijo";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([':prefijo' => $prefijo . '%']);
+    $result = $stmt->fetch();
+    $numero = ($result['max_num'] ?? 0) + 1;
+    return $prefijo . '-' . str_pad($numero, 4, '0', STR_PAD_LEFT);
+}
     
     /**
      * Obtener todas las órdenes
@@ -32,24 +36,33 @@ class OrdenMedicaModel {
                 m.nombre as medico_nombre,
                 u.name as creado_por_nombre,
                 (SELECT COUNT(*) FROM ordenes_productos WHERE orden_id = o.id) as total_items,
-                CASE
-                    WHEN EXISTS (
-                        SELECT 1 FROM autorizaciones a
-                        INNER JOIN ordenes_productos op ON a.orden_producto_id = op.id
-                        WHERE op.orden_id = o.id AND a.estado = 'rechazada'
-                    ) THEN 'rechazada'
-                    WHEN EXISTS (
-                        SELECT 1 FROM autorizaciones a
-                        INNER JOIN ordenes_productos op ON a.orden_producto_id = op.id
-                        WHERE op.orden_id = o.id AND a.estado = 'pendiente'
-                    ) THEN 'pendiente'
-                    WHEN EXISTS (
-                        SELECT 1 FROM autorizaciones a
-                        INNER JOIN ordenes_productos op ON a.orden_producto_id = op.id
-                        WHERE op.orden_id = o.id AND a.estado = 'aprobada'
-                    ) THEN 'aprobada'
-                    ELSE 'sin_autorizacion'
-                END as estado_autorizacion_real
+CASE
+    WHEN EXISTS (
+        SELECT 1 FROM autorizaciones a
+        INNER JOIN ordenes_productos op ON a.orden_producto_id = op.id
+        WHERE op.orden_id = o.id AND a.estado = 'rechazada'
+    ) THEN 'rechazada'
+    WHEN EXISTS (
+        SELECT 1 FROM autorizaciones a
+        INNER JOIN ordenes_productos op ON a.orden_producto_id = op.id
+        WHERE op.orden_id = o.id AND a.estado = 'pendiente'
+    ) AND EXISTS (
+        SELECT 1 FROM autorizaciones a
+        INNER JOIN ordenes_productos op ON a.orden_producto_id = op.id
+        WHERE op.orden_id = o.id AND a.estado = 'aprobada'
+    ) THEN 'parcial'
+    WHEN EXISTS (
+        SELECT 1 FROM autorizaciones a
+        INNER JOIN ordenes_productos op ON a.orden_producto_id = op.id
+        WHERE op.orden_id = o.id AND a.estado = 'pendiente'
+    ) THEN 'pendiente'
+    WHEN EXISTS (
+        SELECT 1 FROM autorizaciones a
+        INNER JOIN ordenes_productos op ON a.orden_producto_id = op.id
+        WHERE op.orden_id = o.id AND a.estado = 'aprobada'
+    ) THEN 'aprobada'
+    ELSE o.estado_autorizacion
+END as estado_autorizacion_real
             FROM ordenes_medicas o
             LEFT JOIN clientes p ON o.paciente_id = p.id
             LEFT JOIN clientes m ON o.medico_id = m.id
@@ -182,80 +195,86 @@ class OrdenMedicaModel {
     /**
      * Crear orden médica con autorizaciones automáticas
      */
-    public function createWithAutorizaciones($data, $productos) {
-        try {
-            $this->db->beginTransaction();
+public function createWithAutorizaciones($data, $productos) {
+    try {
+        $this->db->beginTransaction();
+        
+        $numeroOrden = $this->generarNumeroOrden();
+        $totalProductos = count($productos);
+        $totalValor = 0;
+        
+        foreach ($productos as $prod) {
+            $totalValor += ($prod['cantidad'] ?? 0) * ($prod['precio_unitario'] ?? 0);
+        }
+        
+        $sql = "INSERT INTO ordenes_medicas (numero_orden, paciente_id, medico_id, fecha_orden, 
+                diagnostico, prioridad, observaciones, total_productos, total_valor, created_by, estado) 
+                VALUES (:numero_orden, :paciente_id, :medico_id, :fecha_orden, 
+                :diagnostico, :prioridad, :observaciones, :total_productos, 
+                :total_valor, :created_by, 'pendiente')";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            ':numero_orden'    => $numeroOrden,
+            ':paciente_id'     => $data['paciente_id'] ?? null,
+            ':medico_id'       => $data['medico_id'] ?? null,
+            ':fecha_orden'     => $data['fecha_orden'] ?? date('Y-m-d'),
+            ':diagnostico'     => $data['diagnostico'] ?? null,
+            ':prioridad'       => $data['prioridad'] ?? 'media',
+            ':observaciones'   => $data['observaciones'] ?? null,
+            ':total_productos' => $totalProductos,
+            ':total_valor'     => $totalValor,
+            ':created_by'      => $_SESSION['user_id']
+        ]);
+        
+        $ordenId = $this->db->lastInsertId();
+        error_log("✅ Orden creada ID: $ordenId"); // LOG 1
+        
+        foreach ($productos as $prod) {
+            $subtotal = ($prod['cantidad'] ?? 1) * ($prod['precio_unitario'] ?? 0);
             
-            $numeroOrden = $this->generarNumeroOrden();
-            $totalProductos = count($productos);
-            $totalValor = 0;
+            $requiereAutorizacion = $this->productoRequiereAutorizacion($prod['producto_id']);
+            $estadoAutorizacion   = $requiereAutorizacion ? 'pendiente' : 'aprobada';
             
-            foreach ($productos as $prod) {
-                $totalValor += ($prod['cantidad'] ?? 0) * ($prod['precio_unitario'] ?? 0);
-            }
+            error_log("Producto ID: {$prod['producto_id']} | requiere: $requiereAutorizacion | estado: $estadoAutorizacion"); // LOG 2
             
-            $sql = "INSERT INTO ordenes_medicas (numero_orden, paciente_id, medico_id, fecha_orden, 
-                    diagnostico, prioridad, observaciones, total_productos, total_valor, created_by, estado) 
-                    VALUES (:numero_orden, :paciente_id, :medico_id, :fecha_orden, 
-                    :diagnostico, :prioridad, :observaciones, :total_productos, 
-                    :total_valor, :created_by, 'pendiente')";
+            $sqlProd = "INSERT INTO ordenes_productos (orden_id, producto_id, cantidad, 
+                        precio_unitario, subtotal, estado_autorizacion) 
+                        VALUES (:orden_id, :producto_id, :cantidad, 
+                        :precio_unitario, :subtotal, :estado_autorizacion)";
             
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([
-                ':numero_orden' => $numeroOrden,
-                ':paciente_id' => $data['paciente_id'] ?? null,
-                ':medico_id' => $data['medico_id'] ?? null,
-                ':fecha_orden' => $data['fecha_orden'] ?? date('Y-m-d'),
-                ':diagnostico' => $data['diagnostico'] ?? null,
-                ':prioridad' => $data['prioridad'] ?? 'media',
-                ':observaciones' => $data['observaciones'] ?? null,
-                ':total_productos' => $totalProductos,
-                ':total_valor' => $totalValor,
-                ':created_by' => $_SESSION['user_id']
+            $stmtProd = $this->db->prepare($sqlProd);
+            $stmtProd->execute([
+                ':orden_id'            => $ordenId,
+                ':producto_id'         => $prod['producto_id'],
+                ':cantidad'            => $prod['cantidad'] ?? 1,
+                ':precio_unitario'     => $prod['precio_unitario'] ?? 0,
+                ':subtotal'            => $subtotal,
+                ':estado_autorizacion' => $estadoAutorizacion
             ]);
             
-            $ordenId = $this->db->lastInsertId();
+            $ordenProductoId = $this->db->lastInsertId();
+            error_log("✅ OrdenProducto creado ID: $ordenProductoId"); // LOG 3
             
-            // Insertar productos y crear autorizaciones si es necesario
-            foreach ($productos as $prod) {
-                $subtotal = ($prod['cantidad'] ?? 1) * ($prod['precio_unitario'] ?? 0);
-                
-                // Verificar si el producto requiere autorización
-                $requiereAutorizacion = $this->productoRequiereAutorizacion($prod['producto_id']);
-                $estadoAutorizacion = $requiereAutorizacion ? 'pendiente' : 'aprobada';
-                
-                $sqlProd = "INSERT INTO ordenes_productos (orden_id, producto_id, cantidad, 
-                            precio_unitario, subtotal, estado_autorizacion) 
-                            VALUES (:orden_id, :producto_id, :cantidad, 
-                            :precio_unitario, :subtotal, :estado_autorizacion)";
-                
-                $stmtProd = $this->db->prepare($sqlProd);
-                $stmtProd->execute([
-                    ':orden_id' => $ordenId,
-                    ':producto_id' => $prod['producto_id'],
-                    ':cantidad' => $prod['cantidad'] ?? 1,
-                    ':precio_unitario' => $prod['precio_unitario'] ?? 0,
-                    ':subtotal' => $subtotal,
-                    ':estado_autorizacion' => $estadoAutorizacion
-                ]);
-                
-                $ordenProductoId = $this->db->lastInsertId();
-                
-                // Si requiere autorización, crear registro en autorizaciones
-                if ($requiereAutorizacion) {
-                    $this->crearAutorizacion($ordenProductoId, $data['paciente_id'], $prod['producto_id'], $prod['cantidad'] ?? 1);
-                }
-            }
-            
-            $this->db->commit();
-            return $ordenId;
-            
-        } catch (Exception $e) {
-            $this->db->rollback();
-            error_log("Error al crear orden con autorizaciones: " . $e->getMessage());
-            return false;
+            $resultAut = $this->crearAutorizacion(
+                $ordenProductoId,
+                $data['paciente_id'],
+                $prod['producto_id'],
+                $prod['cantidad'] ?? 1,
+                $estadoAutorizacion
+            );
+            error_log("Autorización resultado: " . ($resultAut ? 'OK' : 'FALLÓ')); // LOG 4
         }
+        
+        $this->db->commit();
+        return $ordenId;
+        
+    } catch (Exception $e) {
+        $this->db->rollback();
+        error_log("❌ EXCEPCIÓN: " . $e->getMessage() . " en línea " . $e->getLine());
+        return false;
     }
+}
     
     /**
      * Verificar si un producto requiere autorización
@@ -271,18 +290,22 @@ class OrdenMedicaModel {
     /**
      * Crear autorización para un producto
      */
-    private function crearAutorizacion($ordenProductoId, $pacienteId, $productoId, $cantidad) {
-        require_once __DIR__ . '/AutorizacionModel.php';
-        $autorizacionModel = new AutorizacionModel();
-        
-        $data = [
-            'orden_producto_id' => $ordenProductoId,
-            'paciente_id' => $pacienteId,
-            'cantidad_aprobada' => $cantidad
-        ];
-        
-        return $autorizacionModel->create($data);
-    }
+    private function crearAutorizacion($ordenProductoId, $pacienteId, $productoId, $cantidad, $estado = 'pendiente') {
+    require_once __DIR__ . '/AutorizacionModel.php';
+    $autorizacionModel = new AutorizacionModel();
+    
+    $data = [
+        'orden_producto_id' => $ordenProductoId,
+        'paciente_id'       => $pacienteId,
+        'cantidad_aprobada' => $cantidad,
+        'estado_inicial'    => $estado,   // <-- pasar el estado
+        'observaciones'     => $estado === 'aprobada'
+                                ? 'Producto libre - aprobado automáticamente'
+                                : null
+    ];
+    
+    return $autorizacionModel->create($data);
+}
     
     /**
      * Actualizar estado de orden

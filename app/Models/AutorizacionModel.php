@@ -110,7 +110,7 @@ class AutorizacionModel
         ':orden_producto_id'    => $data['orden_producto_id'],
         ':paciente_id'          => $data['paciente_id'],
         ':medico_autorizador_id'=> $data['medico_autorizador_id'] ?? null,
-        ':cantidad_aprobada'    => $data['cantidad_aprobada'] ?? 0,
+        ':cantidad_aprobada'    => $data['cantidad_aprobada'] ?? 1,
         ':observaciones'        => $data['observaciones'] ?? null,
         ':estado'               => $estado,
         ':fecha_autorizacion'   => $fechaAut,
