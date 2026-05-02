@@ -94,50 +94,51 @@ switch ($action) {
     // =============================================
     // ÓRDENES MÉDICAS
     // =============================================
-    case 'ordenes':
-        $controller = new OrdenMedicaController();
-        if      ($subaction === 'store'  && $_SERVER['REQUEST_METHOD'] === 'POST') $controller->store();
-        elseif  ($subaction === 'create')                                           $controller->create();
-        elseif  ($subaction === 'edit')                                             $controller->edit();
-        elseif  ($subaction === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') $controller->update();
-        elseif  ($subaction === 'delete')                                           $controller->delete();
-        elseif  ($subaction === 'show')                                             $controller->show();
-        elseif  ($subaction === 'anular')                                           $controller->anular();
-        else                                                                        $controller->index();
-        break;
+    // case 'ordenes':
+    //     $controller = new OrdenMedicaController();
+    //     if      ($subaction === 'store'  && $_SERVER['REQUEST_METHOD'] === 'POST') $controller->store();
+    //     elseif  ($subaction === 'create')                                           $controller->create();
+    //     elseif  ($subaction === 'edit')                                             $controller->edit();
+    //     elseif  ($subaction === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') $controller->update();
+    //     elseif  ($subaction === 'delete')                                           $controller->delete();
+    //     elseif  ($subaction === 'show')                                             $controller->show();
+    //     elseif  ($subaction === 'anular')                                           $controller->anular();
+    //     else                                                                        $controller->index();
+    //     break;
 
     // =============================================
     // AUTORIZACIONES
     // =============================================
     case 'autorizaciones':
-        $controller = new AutorizacionController();
+    $controller = new AutorizacionController();
 
-        // Autorización individual: el modal del index envía a subaction=aprobar o subaction=rechazar
-        // Ambas apuntan al mismo método procesar() que lee $_POST['estado']
-        if (($subaction === 'aprobar' || $subaction === 'rechazar') && $_SERVER['REQUEST_METHOD'] === 'POST') {
-            $controller->procesar();
+    if (($subaction === 'aprobar' || $subaction === 'rechazar') && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        $controller->aprobar();
+    } elseif ($subaction === 'create') {
+        $controller->create();
+    } elseif ($subaction === 'store' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        $controller->store();
+    } elseif ($subaction === 'show') {
+        $controller->show();
+    } else {
+        $controller->index();
+    }
+    break;
 
-        // Aprobar o rechazar una orden médica completa (todos sus productos de una vez)
-        } elseif ($subaction === 'aprobarOrden' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-            $controller->aprobarOrden();
+case 'ordenes':
+    $controller = new OrdenMedicaController();
 
-        } elseif ($subaction === 'rechazarOrden' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-            $controller->rechazarOrden();
-
-        // CRUD normal
-        } elseif ($subaction === 'create') {
-            $controller->create();
-
-        } elseif ($subaction === 'store' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-            $controller->store();
-
-        } elseif ($subaction === 'show') {
-            $controller->show();
-
-        } else {
-            $controller->index();
-        }
-        break;
+    if      ($subaction === 'aprobarOrden'  && $_SERVER['REQUEST_METHOD'] === 'POST') $controller->aprobarOrden();
+    elseif  ($subaction === 'rechazarOrden' && $_SERVER['REQUEST_METHOD'] === 'POST') $controller->rechazarOrden();
+    elseif  ($subaction === 'store'  && $_SERVER['REQUEST_METHOD'] === 'POST') $controller->store();
+    elseif  ($subaction === 'create')                                           $controller->create();
+    elseif  ($subaction === 'edit')                                             $controller->edit();
+    elseif  ($subaction === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') $controller->update();
+    elseif  ($subaction === 'delete')                                           $controller->delete();
+    elseif  ($subaction === 'show')                                             $controller->show();
+    elseif  ($subaction === 'anular')                                           $controller->anular();
+    else                                                                        $controller->index();
+    break;
 
     // =============================================
     // DEFAULT

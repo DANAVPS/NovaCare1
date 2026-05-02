@@ -188,7 +188,7 @@
                                     <!-- Estado Autorización -->
                                     <td class="px-6 py-4">
                                         <?php
-                                            $ea = $orden['estado_autorizacion'] ?? null;
+                                            $ea = $orden['estado_autorizacion_real'] ?? null;
                                             if ($ea === 'aprobada')
                                                 echo '<span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Aprobada</span>';
                                             elseif ($ea === 'rechazada')

@@ -203,4 +203,42 @@ class OrdenMedicaController
         $_SESSION['flash_success'] = 'Orden eliminada exitosamente';
         $this->redirect('ordenes');
     }
+    public function aprobarOrden()
+{
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        $this->redirect('ordenes');
+    }
+
+    $id = $_POST['id'] ?? 0;
+    $result = $this->ordenModel->aprobarOrden($id);
+
+    if ($result) {
+        $_SESSION['flash_success'] = 'Orden aprobada. Las autorizaciones han sido generadas.';
+    } else {
+        $_SESSION['flash_error'] = 'Error al aprobar la orden.';
+    }
+
+    header("Location: /NovaCareCRM/public/index.php?action=ordenes&subaction=show&id={$id}");
+    exit;
+}
+
+public function rechazarOrden()
+{
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        $this->redirect('ordenes');
+    }
+
+    $id     = $_POST['id'] ?? 0;
+    $motivo = $_POST['motivo'] ?? null;
+    $result = $this->ordenModel->rechazarOrden($id, $motivo);
+
+    if ($result) {
+        $_SESSION['flash_success'] = 'Orden rechazada exitosamente.';
+    } else {
+        $_SESSION['flash_error'] = 'Error al rechazar la orden.';
+    }
+
+    header("Location: /NovaCareCRM/public/index.php?action=ordenes&subaction=show&id={$id}");
+    exit;
+}
 }

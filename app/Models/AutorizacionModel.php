@@ -89,24 +89,45 @@ class AutorizacionModel
      * Crear autorización
      */
     public function create($data)
-    {
-        $numeroAutorizacion = $this->generarNumeroAutorizacion();
+{
+    $numeroAutorizacion = $this->generarNumeroAutorizacion();
+    // Si viene estado_inicial (producto libre aprobado auto), usarlo; si no, 'pendiente'
+    $estado = $data['estado_inicial'] ?? 'pendiente';
 
-        $sql = "INSERT INTO autorizaciones (numero_autorizacion, orden_producto_id, paciente_id, 
-                medico_autorizador_id, cantidad_aprobada, observaciones, estado) 
-                VALUES (:numero_autorizacion, :orden_producto_id, :paciente_id, 
-                :medico_autorizador_id, :cantidad_aprobada, :observaciones, 'pendiente')";
+    $sql = "INSERT INTO autorizaciones (numero_autorizacion, orden_producto_id, paciente_id, 
+            medico_autorizador_id, cantidad_aprobada, observaciones, estado,
+            fecha_autorizacion, autorizado_por) 
+            VALUES (:numero_autorizacion, :orden_producto_id, :paciente_id, 
+            :medico_autorizador_id, :cantidad_aprobada, :observaciones, :estado,
+            :fecha_autorizacion, :autorizado_por)";
 
-        $stmt = $this->db->prepare($sql);
-        return $stmt->execute([
-            ':numero_autorizacion' => $numeroAutorizacion,
-            ':orden_producto_id' => $data['orden_producto_id'],
-            ':paciente_id' => $data['paciente_id'],
-            ':medico_autorizador_id' => $data['medico_autorizador_id'] ?? null,
-            ':cantidad_aprobada' => $data['cantidad_aprobada'] ?? 0,
-            ':observaciones' => $data['observaciones'] ?? null
-        ]);
-    }
+    $fechaAut  = ($estado === 'aprobada') ? date('Y-m-d H:i:s') : null;
+    $autorizadoPor = ($estado === 'aprobada') ? ($_SESSION['user_id'] ?? null) : null;
+
+    $stmt = $this->db->prepare($sql);
+    return $stmt->execute([
+        ':numero_autorizacion'  => $numeroAutorizacion,
+        ':orden_producto_id'    => $data['orden_producto_id'],
+        ':paciente_id'          => $data['paciente_id'],
+        ':medico_autorizador_id'=> $data['medico_autorizador_id'] ?? null,
+        ':cantidad_aprobada'    => $data['cantidad_aprobada'] ?? 0,
+        ':observaciones'        => $data['observaciones'] ?? null,
+        ':estado'               => $estado,
+        ':fecha_autorizacion'   => $fechaAut,
+        ':autorizado_por'       => $autorizadoPor
+    ]);
+}
+
+/**
+ * Verificar si ya existe una autorización para un orden_producto
+ */
+public function existeParaOrdenProducto($ordenProductoId): bool
+{
+    $sql = "SELECT COUNT(*) FROM autorizaciones WHERE orden_producto_id = :id";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([':id' => $ordenProductoId]);
+    return (int) $stmt->fetchColumn() > 0;
+}
 
     /**
      * Aprobar/Rechazar autorización
@@ -194,6 +215,7 @@ class AutorizacionModel
                 ':orden_producto_id' => $autorizacion['orden_producto_id'],
                 ':cantidad_aprobada' => $cantidadAprobada
             ]);
+            $this->recalcularEstadoOrden($autorizacion['orden_producto_id']);
 
             $this->db->commit();
 
@@ -253,6 +275,8 @@ class AutorizacionModel
 
             $stmtOp = $this->db->prepare($sqlOp);
             $stmtOp->execute([':orden_producto_id' => $autorizacion['orden_producto_id']]);
+            $this->recalcularEstadoOrden($autorizacion['orden_producto_id']);
+
 
             $this->db->commit();
 
@@ -360,4 +384,46 @@ class AutorizacionModel
         $stmt->execute([':orden_producto_id' => $ordenProductoId]);
         return $stmt->fetch();
     }
+    /**
+ * Recalcula y actualiza estado_autorizacion en ordenes_medicas
+ * según el estado real de todas sus autorizaciones
+ */
+private function recalcularEstadoOrden($ordenProductoId)
+{
+    // Obtener orden_id desde ordenes_productos
+    $sql = "SELECT orden_id FROM ordenes_productos WHERE id = :id";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([':id' => $ordenProductoId]);
+    $row = $stmt->fetch();
+    if (!$row) return;
+
+    $ordenId = $row['orden_id'];
+
+    // Contar estados de todas las autorizaciones de la orden
+    $sql = "SELECT 
+                COUNT(*) as total,
+                SUM(CASE WHEN a.estado = 'pendiente'  THEN 1 ELSE 0 END) as pendientes,
+                SUM(CASE WHEN a.estado = 'rechazada'  THEN 1 ELSE 0 END) as rechazadas,
+                SUM(CASE WHEN a.estado = 'aprobada'   THEN 1 ELSE 0 END) as aprobadas
+            FROM autorizaciones a
+            INNER JOIN ordenes_productos op ON a.orden_producto_id = op.id
+            WHERE op.orden_id = :orden_id";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([':orden_id' => $ordenId]);
+    $stats = $stmt->fetch();
+
+    // Determinar nuevo estado
+    if ($stats['rechazadas'] > 0) {
+        $nuevoEstado = 'rechazada';
+    } elseif ($stats['pendientes'] > 0) {
+        $nuevoEstado = 'pendiente';
+    } else {
+        $nuevoEstado = 'aprobada'; // todas aprobadas
+    }
+
+    // Actualizar ordenes_medicas
+    $sql = "UPDATE ordenes_medicas SET estado_autorizacion = :estado WHERE id = :id";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([':estado' => $nuevoEstado, ':id' => $ordenId]);
+}
 }

@@ -27,16 +27,34 @@ class OrdenMedicaModel {
      * Obtener todas las órdenes
      */
     public function getAll($estado = null, $limit = 100, $offset = 0) {
-        $sql = "SELECT o.*, 
+    $sql = "SELECT o.*,
                 p.nombre as paciente_nombre, p.identificacion as paciente_identificacion,
                 m.nombre as medico_nombre,
                 u.name as creado_por_nombre,
-                (SELECT COUNT(*) FROM ordenes_productos WHERE orden_id = o.id) as total_items
-                FROM ordenes_medicas o
-                LEFT JOIN clientes p ON o.paciente_id = p.id
-                LEFT JOIN clientes m ON o.medico_id = m.id
-                LEFT JOIN users u ON o.created_by = u.id
-                WHERE 1=1";
+                (SELECT COUNT(*) FROM ordenes_productos WHERE orden_id = o.id) as total_items,
+                CASE
+                    WHEN EXISTS (
+                        SELECT 1 FROM autorizaciones a
+                        INNER JOIN ordenes_productos op ON a.orden_producto_id = op.id
+                        WHERE op.orden_id = o.id AND a.estado = 'rechazada'
+                    ) THEN 'rechazada'
+                    WHEN EXISTS (
+                        SELECT 1 FROM autorizaciones a
+                        INNER JOIN ordenes_productos op ON a.orden_producto_id = op.id
+                        WHERE op.orden_id = o.id AND a.estado = 'pendiente'
+                    ) THEN 'pendiente'
+                    WHEN EXISTS (
+                        SELECT 1 FROM autorizaciones a
+                        INNER JOIN ordenes_productos op ON a.orden_producto_id = op.id
+                        WHERE op.orden_id = o.id AND a.estado = 'aprobada'
+                    ) THEN 'aprobada'
+                    ELSE 'sin_autorizacion'
+                END as estado_autorizacion_real
+            FROM ordenes_medicas o
+            LEFT JOIN clientes p ON o.paciente_id = p.id
+            LEFT JOIN clientes m ON o.medico_id = m.id
+            LEFT JOIN users u ON o.created_by = u.id
+            WHERE 1=1";
         $params = [];
         
         if ($estado) {
@@ -340,5 +358,83 @@ class OrdenMedicaModel {
         $stmt->execute();
         return $stmt->fetchAll();
     }
+    /**
+ * Aprobar orden: cambia estado y crea autorizaciones para todos sus productos
+ */
+public function aprobarOrden($ordenId)
+{
+    try {
+        $this->db->beginTransaction();
+
+        // Cambiar estado de la orden
+        $sql = "UPDATE ordenes_medicas SET estado = 'en_proceso' WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':id' => $ordenId]);
+
+        // Obtener todos los productos de la orden
+        $productos = $this->getProductosByOrden($ordenId);
+
+        // Obtener paciente_id de la orden
+        $orden = $this->getById($ordenId);
+        $pacienteId = $orden['paciente_id'];
+
+        require_once __DIR__ . '/AutorizacionModel.php';
+        $autorizacionModel = new AutorizacionModel();
+
+        foreach ($productos as $prod) {
+            $requiereAutorizacion = $prod['requiere_autorizacion'] ?? 0;
+            $estadoAut = $requiereAutorizacion ? 'pendiente' : 'aprobada';
+
+            // Actualizar estado_autorizacion en ordenes_productos
+            $sqlOp = "UPDATE ordenes_productos 
+                      SET estado_autorizacion = :estado 
+                      WHERE id = :id";
+            $stmtOp = $this->db->prepare($sqlOp);
+            $stmtOp->execute([
+                ':estado' => $estadoAut,
+                ':id'     => $prod['id']
+            ]);
+
+            // Crear registro en autorizaciones solo si no existe ya
+            $yaExiste = $autorizacionModel->existeParaOrdenProducto($prod['id']);
+            if (!$yaExiste) {
+                $autorizacionModel->create([
+                    'orden_producto_id'    => $prod['id'],
+                    'paciente_id'          => $pacienteId,
+                    'cantidad_aprobada'    => $prod['cantidad'],
+                    'medico_autorizador_id'=> null,
+                    'observaciones'        => $requiereAutorizacion
+                                                ? null
+                                                : 'Producto libre - aprobado automáticamente',
+                    'estado_inicial'       => $estadoAut   // se usará en create()
+                ]);
+            }
+        }
+
+        $this->db->commit();
+        return true;
+
+    } catch (Exception $e) {
+        $this->db->rollback();
+        error_log("Error al aprobar orden: " . $e->getMessage());
+        return false;
+    }
+}
+
+/**
+ * Rechazar orden: solo cambia estado, no crea autorizaciones
+ */
+public function rechazarOrden($ordenId, $motivo = null)
+{
+    $sql = "UPDATE ordenes_medicas 
+            SET estado = 'anulada',
+                observaciones = CONCAT(IFNULL(observaciones, ''), ' | Rechazada: ', :motivo)
+            WHERE id = :id";
+    $stmt = $this->db->prepare($sql);
+    return $stmt->execute([
+        ':id'     => $ordenId,
+        ':motivo' => $motivo ?? 'Sin motivo especificado'
+    ]);
+}
 }
 ?>
