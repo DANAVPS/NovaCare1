@@ -13,13 +13,13 @@ class ProductoController {
     
     private function checkAuth() {
         if (!isset($_SESSION['user_id'])) {
-            header('Location: /xampp/NovaCareCRM/public/index.php?action=login');
+            header('Location: /NovaCareCRM/public/index.php?action=login');
             exit;
         }
     }
     
     private function redirect($action) {
-        header("Location: /xampp/NovaCareCRM/public/index.php?action={$action}");
+        header("Location: /NovaCareCRM/public/index.php?action={$action}");
         exit;
     }
     

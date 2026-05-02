@@ -22,7 +22,7 @@ class DashboardController {
     
     private function checkAuth() {
         if (!isset($_SESSION['user_id'])) {
-            header('Location: /xampp/NovaCareCRM/public/index.php?action=login');
+            header('Location: /NovaCareCRM/public/index.php?action=login');
             exit;
         }
     }

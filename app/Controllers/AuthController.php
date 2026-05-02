@@ -11,19 +11,19 @@ class AuthController {
     }
     
     /**
-     * Obtener la URL base - CORREGIDO con /xampp/
+     * Obtener la URL base - CORREGIDO con /
      */
     private function getBaseUrl() {
         $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
         $host = $_SERVER['HTTP_HOST'];
-        return $protocol . '://' . $host . '/xampp/NovaCareCRM';
+        return $protocol . '://' . $host . '/NovaCareCRM';
     }
     
     /**
      * Redireccionar con action - CORREGIDO
      */
     private function redirect($action) {
-        header("Location: /xampp/NovaCareCRM/public/index.php?action={$action}");
+        header("Location: /NovaCareCRM/public/index.php?action={$action}");
         exit;
     }
     
@@ -167,7 +167,7 @@ class AuthController {
         
         $this->userModel->saveResetToken($user['id'], $token, $expires);
         
-        $resetLink = "/xampp/NovaCareCRM/public/index.php?action=reset-password&token=" . $token;
+        $resetLink = "/NovaCareCRM/public/index.php?action=reset-password&token=" . $token;
         
         $_SESSION['flash_success'] = "Enlace de restablecimiento generado: <br><a href='{$resetLink}' style='color: #f51b1c;' target='_blank'>Click aquí para restablecer tu contraseña</a><br><small>(Este enlace expira en 1 hora)</small>";
         $this->redirect('forgot-password');
