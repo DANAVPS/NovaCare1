@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 02-05-2026 a las 22:46:51
+-- Tiempo de generación: 03-05-2026 a las 00:57:45
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -70,13 +70,11 @@ INSERT INTO `autorizaciones` (`id`, `numero_autorizacion`, `orden_producto_id`, 
 (10, 'AUTH-2026-0010', 4, 11, 9, '2026-04-01 09:25:00', '2026-04-02 08:00:00', '2026-10-01', 1, 'aprobada', NULL, 'Glucómetro aprobado. Paciente sin dispositivo de autocontrol.', 1, '2026-04-01 14:25:00', '2026-04-02 13:00:00'),
 (11, 'AUTH-2026-0011', 10, 6, 4, '2026-04-14 11:10:00', '2026-04-14 15:00:00', '2026-05-14', 10, 'aprobada', NULL, 'Ibuprofeno 400mg — manejo analgésico agudo aprobado.', 1, '2026-04-14 16:10:00', '2026-04-14 20:00:00'),
 (12, 'AUTH-2026-0012', 11, 6, 4, '2026-04-14 11:15:00', '2026-04-14 15:05:00', '2026-05-14', 1, 'aprobada', NULL, 'Consulta médica general — aprobada.', 1, '2026-04-14 16:15:00', '2026-04-14 20:05:00'),
-(13, 'AUTH-2026-0013', 12, 13, 9, '2026-04-20 16:10:00', '2026-04-20 18:00:00', '2026-05-20', 10, 'aprobada', NULL, 'Acetaminofén aprobado. Uso sintomático infección respiratoria.', 1, '2026-04-20 21:10:00', '2026-04-20 23:00:00'),
-(14, 'AUTH-2026-0014', 14, 13, 9, '2026-04-20 16:15:00', '2026-04-20 18:05:00', '2026-05-20', 1, 'aprobada', NULL, 'Consulta general aprobada. Seguimiento en 7 días.', 1, '2026-04-20 21:15:00', '2026-04-20 23:05:00'),
-(15, 'AUTH-2026-0015', 13, 13, 9, '2026-04-21 08:00:00', '2026-04-23 23:53:52', '2026-05-21', 0, 'aprobada', '', 'Pendiente respuesta EPS para ecografía abdominal de Diego.', 1, '2026-04-21 13:00:00', '2026-04-24 04:53:52'),
-(16, 'AUTH-2026-0016', 8, 5, 10, '2026-04-10 14:10:00', '2026-04-11 10:00:00', NULL, 0, 'rechazada', 'Falta concepto de nutricionista previo al inicio de estatinas.', 'Se solicita evaluación nutricional antes de autorizar.', 1, '2026-04-10 19:10:00', '2026-04-11 15:00:00'),
-(17, 'AUTH-2026-0017', 8, 5, 10, '2026-04-18 09:00:00', '2026-04-24 00:16:35', '2026-05-18', 0, 'aprobada', NULL, 'Re-solicitud con concepto nutricional adjunto. En revisión.', 1, '2026-04-18 14:00:00', '2026-04-24 05:16:35'),
-(18, 'AUTH-2026-0018', 5, 12, 4, '2026-04-05 10:40:00', '2026-05-01 23:38:04', '2026-07-05', 0, 'aprobada', NULL, 'Solicitada autorización Losartán EPS Famisanar. Sin respuesta.', 1, '2026-04-05 15:40:00', '2026-05-02 04:38:04'),
-(19, 'AUT-20260501-0001', 18, 12, NULL, '2026-05-01 23:40:01', '2026-05-02 00:04:36', NULL, 0, 'aprobada', NULL, NULL, 1, '2026-05-02 04:40:01', '2026-05-02 05:04:36');
+(23, 'AUT-20260502-0001', 26, 12, NULL, '2026-05-02 16:47:23', '2026-05-02 16:47:38', NULL, 0, 'aprobada', NULL, NULL, 1, '2026-05-02 21:47:23', '2026-05-02 21:47:38'),
+(24, 'AUT-20260502-0002', 27, 12, NULL, '2026-05-02 17:27:10', '2026-05-02 17:28:00', NULL, 1, 'rechazada', '', NULL, 1, '2026-05-02 22:27:10', '2026-05-02 22:28:00'),
+(25, 'AUT-20260502-0003', 28, 12, NULL, '2026-05-02 17:28:31', NULL, NULL, 2, 'pendiente', NULL, NULL, NULL, '2026-05-02 22:28:31', '2026-05-02 22:28:31'),
+(26, 'AUT-20260502-0004', 29, 12, NULL, '2026-05-02 17:28:35', NULL, NULL, 2, 'pendiente', NULL, NULL, NULL, '2026-05-02 22:28:35', '2026-05-02 22:28:35'),
+(27, 'AUT-20260502-0005', 31, 13, NULL, '2026-05-02 17:56:34', '2026-05-02 17:56:34', NULL, 1, 'aprobada', NULL, 'Producto libre - aprobado automáticamente', 1, '2026-05-02 22:56:34', '2026-05-02 22:56:34');
 
 -- --------------------------------------------------------
 
@@ -153,13 +151,18 @@ CREATE TABLE `ordenes_medicas` (
 --
 
 INSERT INTO `ordenes_medicas` (`id`, `numero_orden`, `paciente_id`, `medico_id`, `fecha_orden`, `fecha_expiracion`, `diagnostico`, `estado`, `prioridad`, `observaciones`, `total_productos`, `total_valor`, `created_by`, `created_at`, `updated_at`, `estado_autorizacion`) VALUES
-(1, 'OM-2026-0001', 11, 9, '2026-04-01', '2026-07-01', 'Diabetes mellitus tipo 2 — E11.9. Paciente con HbA1c elevada (8.5%). Inicia manejo farmacológico y seguimiento mensual.', 'parcial', 'alta', 'Paciente colaborador. Requiere educación en hábitos saludables.', 4, 352000.00, 1, '2026-04-01 14:00:00', '2026-04-24 10:00:00', 'pendiente'),
-(2, 'OM-2026-0002', 12, 4, '2026-04-05', '2026-07-05', 'Hipertensión arterial esencial — I10. Control ambulatorio con Losartán. Solicitud de exámenes de seguimiento.', 'pendiente', 'media', 'Refiere buen cumplimiento del tratamiento previo.', 3, 358000.00, 1, '2026-04-05 15:30:00', '2026-04-24 10:00:00', 'pendiente'),
-(3, 'OM-2026-0003', 5, 10, '2026-04-10', '2026-07-10', 'Dislipidemia mixta — E78.4. Colesterol total 260 mg/dL. Se inicia Atorvastatina y solicita perfil lipídico control.', 'pendiente', 'media', NULL, 2, 220000.00, 2, '2026-04-10 19:00:00', '2026-04-24 10:00:00', 'pendiente'),
-(4, 'OM-2026-0004', 6, 4, '2026-04-14', '2026-06-14', 'Dolor osteomuscular agudo — M79.3. Manejo analgésico con Ibuprofeno. Consulta general de seguimiento.', 'completada', 'baja', 'Se indica reposo relativo y fisioterapia.', 2, 88000.00, 3, '2026-04-14 16:00:00', '2026-04-24 10:00:00', 'pendiente'),
-(5, 'OM-2026-0005', 13, 9, '2026-04-20', '2026-07-20', 'Infección respiratoria alta — J06.9. Manejo sintomático. Ecografía abdominal por hallazgo incidental en TAC previo.', 'pendiente', 'urgente', 'Paciente con antecedente de tabaquismo.', 3, 335000.00, 1, '2026-04-20 21:00:00', '2026-04-24 10:00:00', 'pendiente'),
-(6, 'OM-2026-0006', 11, 10, '2026-04-22', '2026-07-22', 'Control metabólico diabetes — E11.9. Seguimiento trimestral. Solicita HbA1c, perfil lipídico y ajuste de Metformina.', 'pendiente', 'media', 'Paciente refiere episodios de hipoglucemia leve.', 3, 192000.00, 2, '2026-04-22 13:00:00', '2026-04-24 10:00:00', 'pendiente'),
-(7, 'ORD-20260501-0001', 12, 10, '2026-05-01', NULL, 'PRUEBA 1', 'pendiente', 'alta', 'NINGUNA', 1, 12000.00, 1, '2026-05-02 04:40:01', '2026-05-02 05:04:36', 'aprobada');
+(1, 'OM-2026-0001', 11, 9, '2026-04-01', '2026-07-01', 'Diabetes mellitus tipo 2 — E11.9. Paciente con HbA1c elevada (8.5%). Inicia manejo farmacológico y seguimiento mensual.', 'parcial', 'alta', 'Paciente colaborador. Requiere educación en hábitos saludables.', 4, 352000.00, 1, '2026-04-01 14:00:00', '2026-05-02 21:51:54', 'aprobada'),
+(2, 'OM-2026-0002', 12, 4, '2026-04-05', '2026-07-05', 'Hipertensión arterial esencial — I10. Control ambulatorio con Losartán. Solicitud de exámenes de seguimiento.', 'pendiente', 'media', 'Refiere buen cumplimiento del tratamiento previo.', 3, 358000.00, 1, '2026-04-05 15:30:00', '2026-05-02 21:51:48', 'aprobada'),
+(3, 'OM-2026-0003', 5, 10, '2026-04-10', '2026-07-10', 'Dislipidemia mixta — E78.4. Colesterol total 260 mg/dL. Se inicia Atorvastatina y solicita perfil lipídico control.', 'pendiente', 'media', NULL, 2, 220000.00, 2, '2026-04-10 19:00:00', '2026-05-02 21:51:57', 'aprobada'),
+(4, 'OM-2026-0004', 6, 4, '2026-04-14', '2026-06-14', 'Dolor osteomuscular agudo — M79.3. Manejo analgésico con Ibuprofeno. Consulta general de seguimiento.', 'completada', 'baja', 'Se indica reposo relativo y fisioterapia.', 2, 88000.00, 3, '2026-04-14 16:00:00', '2026-05-02 21:52:03', 'aprobada'),
+(5, 'OM-2026-0005', 13, 9, '2026-04-20', '2026-07-20', 'Infección respiratoria alta — J06.9. Manejo sintomático. Ecografía abdominal por hallazgo incidental en TAC previo.', 'pendiente', 'urgente', 'Paciente con antecedente de tabaquismo.', 3, 335000.00, 1, '2026-04-20 21:00:00', '2026-05-02 21:52:39', 'aprobada'),
+(6, 'OM-2026-0006', 11, 10, '2026-04-22', '2026-07-22', 'Control metabólico diabetes — E11.9. Seguimiento trimestral. Solicita HbA1c, perfil lipídico y ajuste de Metformina.', 'pendiente', 'media', 'Paciente refiere episodios de hipoglucemia leve.', 3, 192000.00, 2, '2026-04-22 13:00:00', '2026-05-02 21:52:43', 'aprobada'),
+(13, 'ORD-20260502-0006', 12, 10, '2026-05-02', NULL, 'pruebas', 'pendiente', 'media', 'pruebas', 1, 18000.00, 1, '2026-05-02 21:47:23', '2026-05-02 21:47:38', 'aprobada'),
+(14, 'ORD-20260502-0002', 12, 9, '2026-05-02', NULL, 'prueba', 'pendiente', 'media', 'prueba', 1, 18000.00, 1, '2026-05-02 22:27:10', '2026-05-02 22:28:00', 'rechazada'),
+(15, 'ORD-20260502-0003', 12, 4, '2026-05-02', NULL, 'prueba', 'pendiente', 'media', 'prueba', 1, 36000.00, 1, '2026-05-02 22:28:31', '2026-05-02 22:28:31', 'pendiente'),
+(16, 'ORD-20260502-0004', 12, 4, '2026-05-02', NULL, 'prueba', 'pendiente', 'media', 'prueba', 1, 36000.00, 1, '2026-05-02 22:28:35', '2026-05-02 22:28:35', 'pendiente'),
+(17, 'ORD-20260502-0005', 11, 10, '2026-05-02', NULL, 'prueba', 'anulada', 'media', 'prueba Motivo anulación: Sin motivo especificado', 1, 5000.00, 1, '2026-05-02 22:31:15', '2026-05-02 22:56:58', 'pendiente'),
+(23, 'ORD-20260502-0007', 13, 9, '2026-05-02', NULL, 'prueba', 'pendiente', 'media', 'prueba', 1, 5000.00, 1, '2026-05-02 22:56:34', '2026-05-02 22:56:34', 'pendiente');
 
 -- --------------------------------------------------------
 
@@ -205,7 +208,12 @@ INSERT INTO `ordenes_productos` (`id`, `orden_id`, `producto_id`, `cantidad`, `c
 (15, 6, 6, 1, NULL, 0, 45000.00, 45000.00, 19.00, 53550.00, 'pendiente', 'HbA1c trimestral control', '2026-04-22 13:05:00'),
 (16, 6, 13, 1, NULL, 0, 55000.00, 55000.00, 19.00, 65450.00, 'pendiente', 'Perfil lipídico control', '2026-04-22 13:05:00'),
 (17, 6, 7, 90, NULL, 0, 12000.00, 1080000.00, 19.00, 1285200.00, 'pendiente', 'Metformina 850mg — ajuste de dosis a evaluar', '2026-04-22 13:05:00'),
-(18, 7, 7, 1, 0, 0, 12000.00, 12000.00, 19.00, 0.00, 'aprobada', NULL, '2026-05-02 04:40:01');
+(26, 13, 9, 1, 0, 0, 18000.00, 18000.00, 19.00, 0.00, 'aprobada', NULL, '2026-05-02 21:47:23'),
+(27, 14, 9, 1, NULL, 0, 18000.00, 18000.00, 19.00, 0.00, 'rechazada', NULL, '2026-05-02 22:27:10'),
+(28, 15, 9, 2, NULL, 0, 18000.00, 36000.00, 19.00, 0.00, 'pendiente', NULL, '2026-05-02 22:28:31'),
+(29, 16, 9, 2, NULL, 0, 18000.00, 36000.00, 19.00, 0.00, 'pendiente', NULL, '2026-05-02 22:28:35'),
+(30, 17, 1, 1, NULL, 0, 5000.00, 5000.00, 19.00, 0.00, 'aprobada', NULL, '2026-05-02 22:31:15'),
+(31, 23, 1, 1, NULL, 0, 5000.00, 5000.00, 19.00, 0.00, 'aprobada', NULL, '2026-05-02 22:56:34');
 
 -- --------------------------------------------------------
 
@@ -277,7 +285,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `reset_token`, `reset_expires`, `role`, `status`, `last_login`, `created_at`, `updated_at`) VALUES
-(1, 'Administrador NovaCare', 'admin@novacare.com', '$2y$10$5mAkkNvTW2F9bfnOqf4nC.zSlrYsC3sgAGz6sJwyxaMWFK8AuSLd.', NULL, NULL, 'admin', 1, '2026-05-01 23:09:40', '2026-04-22 05:28:13', '2026-05-02 04:09:40'),
+(1, 'Administrador NovaCare', 'admin@novacare.com', '$2y$10$5mAkkNvTW2F9bfnOqf4nC.zSlrYsC3sgAGz6sJwyxaMWFK8AuSLd.', NULL, NULL, 'admin', 1, '2026-05-02 16:23:57', '2026-04-22 05:28:13', '2026-05-02 21:23:57'),
 (2, 'Dr. Juan Pérez', 'dr.juan@novacare.com', '$2y$10$YourHashHere', NULL, NULL, 'doctor', 1, NULL, '2026-04-22 05:28:14', '2026-04-22 05:28:14'),
 (3, 'Enf. María González', 'maria.gonzalez@novacare.com', '$2y$10$YourHashHere', NULL, NULL, 'nurse', 1, NULL, '2026-04-22 05:28:14', '2026-04-22 05:28:14'),
 (5, 'Administrador NovaCare', 'adming@novacare.com', '$2y$10$YourHashHere', NULL, NULL, 'admin', 1, NULL, '2026-04-22 05:29:28', '2026-04-22 05:29:28');
@@ -376,7 +384,7 @@ ALTER TABLE `access_logs`
 -- AUTO_INCREMENT de la tabla `autorizaciones`
 --
 ALTER TABLE `autorizaciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT de la tabla `clientes`
@@ -388,13 +396,13 @@ ALTER TABLE `clientes`
 -- AUTO_INCREMENT de la tabla `ordenes_medicas`
 --
 ALTER TABLE `ordenes_medicas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT de la tabla `ordenes_productos`
 --
 ALTER TABLE `ordenes_productos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
