@@ -328,6 +328,6 @@ Este proyecto está bajo licencia **MIT**. Consulta el archivo `LICENSE` para m�
 
 ---
 
-**Última actualización**: Abril 2026  
-**Versión**: 1.0.0  
+**Última actualización**: Mayo 2026  
+**Versión**: 2.0.0  
 **Mantenedor**: Equipo NovaCare
