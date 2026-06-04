@@ -10,26 +10,17 @@ class AuthController {
         $this->userModel = new UserModel();
     }
     
-    /**
-     * Obtener la URL base - CORREGIDO con /
-     */
     private function getBaseUrl() {
         $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
         $host = $_SERVER['HTTP_HOST'];
         return $protocol . '://' . $host . '/NovaCareCRM';
     }
     
-    /**
-     * Redireccionar con action - CORREGIDO
-     */
-    private function redirect($action) {
+    protected function redirect($action) {
         header("Location: /NovaCareCRM/public/index.php?action={$action}");
         exit;
     }
     
-    /**
-     * Mostrar página de login
-     */
     public function showLogin() {
         if (isset($_SESSION['user_id'])) {
             $this->redirect('dashboard');
@@ -47,9 +38,6 @@ class AuthController {
         ]);
     }
     
-    /**
-     * Procesar login
-     */
     public function login() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirect('login');
@@ -105,29 +93,19 @@ class AuthController {
         $this->redirect('dashboard');
     }
     
-    /**
-     * Cerrar sesión
-     */
     public function logout() {
         $_SESSION = [];
-        
         if (isset($_COOKIE['remember_token'])) {
             setcookie('remember_token', '', time() - 3600, '/');
         }
-        
         session_destroy();
         $this->redirect('login');
     }
     
-    /**
-     * Mostrar formulario para solicitar restablecimiento de contraseña
-     */
     public function showForgotPassword() {
         $error = $_SESSION['flash_error'] ?? null;
         $success = $_SESSION['flash_success'] ?? null;
-        
         unset($_SESSION['flash_error'], $_SESSION['flash_success']);
-        
         $this->render('auth/forgot-password', [
             'title' => 'Restablecer Contraseña',
             'error' => $error,
@@ -135,16 +113,12 @@ class AuthController {
         ]);
     }
     
-    /**
-     * Procesar solicitud de restablecimiento
-     */
     public function forgotPassword() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirect('forgot-password');
         }
         
         $email = trim($_POST['email'] ?? '');
-        
         if (empty($email)) {
             $_SESSION['flash_error'] = 'Por favor ingresa tu correo electrónico';
             $this->redirect('forgot-password');
@@ -156,7 +130,6 @@ class AuthController {
         }
         
         $user = $this->userModel->findByEmail($email);
-        
         if (!$user) {
             $_SESSION['flash_success'] = 'Si el correo existe en nuestro sistema, recibirás un enlace para restablecer tu contraseña.';
             $this->redirect('forgot-password');
@@ -164,36 +137,28 @@ class AuthController {
         
         $token = bin2hex(random_bytes(32));
         $expires = date('Y-m-d H:i:s', strtotime('+1 hour'));
-        
         $this->userModel->saveResetToken($user['id'], $token, $expires);
         
         $resetLink = "/NovaCareCRM/public/index.php?action=reset-password&token=" . $token;
-        
-        $_SESSION['flash_success'] = "Enlace de restablecimiento generado: <br><a href='{$resetLink}' style='color: #f51b1c;' target='_blank'>Click aquí para restablecer tu contraseña</a><br><small>(Este enlace expira en 1 hora)</small>";
+        $_SESSION['flash_success'] = "Enlace de restablecimiento generado... ";
         $this->redirect('forgot-password');
     }
     
-    /**
-     * Mostrar formulario para nueva contraseña
-     */
     public function showResetPassword() {
         $token = $_GET['token'] ?? '';
-        
         if (empty($token)) {
             $_SESSION['flash_error'] = 'Token inválido';
             $this->redirect('forgot-password');
         }
         
         $user = $this->userModel->verifyResetToken($token);
-        
         if (!$user) {
-            $_SESSION['flash_error'] = 'El enlace ha expirado o es inválido. Por favor, solicita un nuevo restablecimiento.';
+            $_SESSION['flash_error'] = 'El enlace ha expirado...';
             $this->redirect('forgot-password');
         }
         
         $error = $_SESSION['flash_error'] ?? null;
         $success = $_SESSION['flash_success'] ?? null;
-        
         unset($_SESSION['flash_error'], $_SESSION['flash_success']);
         
         $this->render('auth/reset-password', [
@@ -204,9 +169,6 @@ class AuthController {
         ]);
     }
     
-    /**
-     * Procesar el cambio de contraseña
-     */
     public function resetPassword() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirect('forgot-password');
@@ -217,20 +179,9 @@ class AuthController {
         $confirmPassword = $_POST['confirm_password'] ?? '';
         
         $errors = [];
-        
-        if (empty($token)) {
-            $errors[] = 'Token inválido';
-        }
-        
-        if (empty($password)) {
-            $errors[] = 'La nueva contraseña es obligatoria';
-        } elseif (strlen($password) < 6) {
-            $errors[] = 'La contraseña debe tener al menos 6 caracteres';
-        }
-        
-        if ($password !== $confirmPassword) {
-            $errors[] = 'Las contraseñas no coinciden';
-        }
+        if (empty($token)) $errors[] = 'Token inválido';
+        if (empty($password)) $errors[] = 'La nueva contraseña es obligatoria';
+        if ($password !== $confirmPassword) $errors[] = 'Las contraseñas no coinciden';
         
         if (!empty($errors)) {
             $_SESSION['flash_error'] = implode('<br>', $errors);
@@ -238,27 +189,22 @@ class AuthController {
         }
         
         $user = $this->userModel->verifyResetToken($token);
-        
         if (!$user) {
             $_SESSION['flash_error'] = 'El enlace ha expirado o es inválido';
             $this->redirect('forgot-password');
         }
         
         $result = $this->userModel->updatePassword($user['id'], $password);
-        
         if ($result) {
-            $_SESSION['flash_success'] = '¡Contraseña actualizada exitosamente! Ahora puedes iniciar sesión con tu nueva contraseña.';
+            $_SESSION['flash_success'] = '¡Contraseña actualizada exitosamente!';
             $this->redirect('login');
         } else {
-            $_SESSION['flash_error'] = 'Error al actualizar la contraseña. Por favor, intenta nuevamente.';
+            $_SESSION['flash_error'] = 'Error al actualizar...';
             $this->redirect("reset-password&token={$token}");
         }
     }
     
-    /**
-     * Renderizar vista
-     */
-    private function render($view, $data = []) {
+    protected function render($view, $data = []) {
         extract($data);
         require_once __DIR__ . "/../Views/{$view}.php";
     }
