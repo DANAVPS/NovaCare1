@@ -18,7 +18,8 @@ class ClienteController {
         }
     }
     
-    private function redirect($action) {
+    // Se cambia de private a protected para permitir pruebas mockeando el comportamiento
+    protected function redirect($action) {
         header("Location: /NovaCareCRM/public/index.php?action={$action}");
         exit;
     }
